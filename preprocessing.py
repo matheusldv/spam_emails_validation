@@ -25,60 +25,56 @@ def make_wordcloud(corpus , stopword):
     return word_cloud
 
 def wordcloud(df):
-    # Creting seprate dataset for Spam and Non Spam emails, to perform analysis 
+    # Cria datasets separados para Spam e Não-Spam 
     Spam = pd.DataFrame(columns = ['Email_text', 'Email_Subject', 'Labels'])
     Non_Spam = pd.DataFrame(columns = ['Email_text', 'Email_Subject', 'Labels'])
 
-    # Creating Non_Spam email dataset 
+    # Não-Spam dataset
     for i in range(len(df)):
         if(df['Labels'][i] == 0):
             new_row = {'Email_text':df['Email_text'][i], 'Email_Subject':df['Email_Subject'][i], 'Labels':df['Labels'][i]}
             Non_Spam = Non_Spam._append(new_row, ignore_index=True)
 
-    # Creating Spam email dataset 
+    # Spam Dataset 
     for i in range(len(df)):
         if(df['Labels'][i] == 1):
             new_row = {'Email_text':df['Email_text'][i], 'Email_Subject':df['Email_Subject'][i], 'Labels':df['Labels'][i]}
             Spam = Spam._append(new_row, ignore_index=True)
 
-    # Creating stopwords corpus
+    # Criando stopwords para diminuir ruido no dataset 
     STOPWORDS = set()
     more_stopwords = {'re' , 's' , 'subject','hpl','hou','enron'}
     STOPWORDS = STOPWORDS.union(more_stopwords)
 
-    # Creating spam subject corpus 
+    # Corpo do Assunto do email (spam)
     Subject_corpus_spam = ""
     for i in range(len(Spam)):
         Subject_corpus_spam = Subject_corpus_spam + Spam['Email_Subject'][i]
 
-    # Creating spam text corpus 
+    # Corpo do Texto do email (spam)
     Text_corpus_spam = ""
     for i in range(len(Spam)):
         Text_corpus_spam = Text_corpus_spam + Spam['Email_text'][i]
 
-    # Creating non-spam subject corpus 
+    # Corpo do Assunto do email (não-spam)
     Subject_corpus_non_spam = ""
     for i in range(len(Non_Spam)):
         Subject_corpus_non_spam = Subject_corpus_non_spam + Non_Spam['Email_Subject'][i]
 
-    # Creating non-spam text corpus 
+     # Corpo do Texto do email (não-spam)
     Text_corpus_non_spam = ""
     for i in range(len(Non_Spam)):
         Text_corpus_non_spam = Text_corpus_non_spam + Non_Spam['Email_text'][i]
 
-    # Plotting word cloud for Spam Subject corpus
+    # Plotando os wordclouds
     Spam_Subject_wordcloud = make_wordcloud (Subject_corpus_spam , STOPWORDS)
 
-    # Plotting word cloud for Spam Text corpus
     Spam_Text_wordcloud = make_wordcloud (Text_corpus_spam , STOPWORDS)
 
-    # Plotting word cloud for Non Spam Subject corpus
     Non_Spam_Subject_wordcloud = make_wordcloud (Subject_corpus_non_spam , STOPWORDS)
 
-    # Plotting word cloud for Non Spam Text corpus
     Non_Spam_Subject_wordcloud = make_wordcloud (Text_corpus_non_spam , STOPWORDS)
 
-    #plotting word cloud for Spam Subject corpus
     Spam_Subject_wordcloud = make_wordcloud (Subject_corpus_spam , STOPWORDS)
     plt.figure(figsize=(13, 13))
     plt.title("Palavras mais comuns no Assunto de emails Spam", fontdict={'size': 20, 'color': 'black', 
@@ -87,7 +83,6 @@ def wordcloud(df):
     plt.axis("off")
     plt.show()
 
-    #plotting word cloud for Spam Text corpus
     Spam_Text_wordcloud = make_wordcloud (Text_corpus_spam , STOPWORDS)
     plt.figure(figsize=(13, 13))
     plt.title("Palavras mais comuns em emails Spam", fontdict={'size': 20, 'color': 'black', 
@@ -96,7 +91,6 @@ def wordcloud(df):
     plt.axis("off")
     plt.show()
 
-    #plotting word cloud for Non Spam Subject corpus
     Non_Spam_Subject_wordcloud = make_wordcloud (Subject_corpus_non_spam , STOPWORDS)
     plt.figure(figsize=(13, 13))
     plt.title("Palavras mais comuns no Assunto de emails Nao-Spam", fontdict={'size': 20, 'color': 'black', 
@@ -105,7 +99,6 @@ def wordcloud(df):
     plt.axis("off")
     plt.show()
 
-    #plotting word cloud for Non Spam Text corpus
     Non_Spam_Subject_wordcloud = make_wordcloud (Text_corpus_non_spam , STOPWORDS)
     plt.figure(figsize=(13, 13))
     plt.title("Palavras mais comuns em emails Nao-Spam", fontdict={'size': 20, 'color': 'black', 
@@ -115,10 +108,11 @@ def wordcloud(df):
     plt.show()
 
 def preprocess_dataset(df):
-    df1 = df.copy()
-    df1 = df1.drop('Unnamed: 0', axis=1)
-    df1 = df1.drop('label', axis=1)
+    df1 = df.copy() # Copia o dataset original para um novo dataframe
+    df1 = df1.drop('Unnamed: 0', axis=1) # Removendo colunas não necessárias
+    df1 = df1.drop('label', axis=1) # Removendo colunas não necessárias
 
+    # Separando assunto de corpo do email e removendo pontuações
     subjects = []
     for i in range(len(df1)):
         ln = df1["text"][i]
